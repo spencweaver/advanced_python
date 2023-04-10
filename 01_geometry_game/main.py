@@ -8,21 +8,21 @@ class Point:
         self.y = y
 
     def falls_in_rectangle(self, rectangle):
-        if rectangle.lowleft.x < self.x < rectangle.upright.x \
-            and rectangle.lowleft.y < self.y < rectangle.upright.y:
+        if rectangle.point1.x < self.x < rectangle.point2.x \
+            and rectangle.point1.y < self.y < rectangle.point2.y:
             return True
         else:
             return False
 
 class Rectangle:
 
-    def __init__(self, lowleft, upright):
-        self.lowleft = lowleft
-        self.upright = upright
+    def __init__(self, point1, point2):
+        self.point1 = point1
+        self.point2 = point2
 
     def area(self):
-        return (self.upright.x - self.lowleft.x) * \
-            (self.upright.y - self.lowleft.y)
+        return (self.point2.x - self.point1.x) * \
+            (self.point2.y - self.point1.y)
 
 class GuiRectangle(Rectangle):
 
@@ -32,41 +32,53 @@ class GuiRectangle(Rectangle):
 
         canvas.pendown()
 
-        canvas.forward()
-        canvas.left()
-        canvas.forward()
-        canvas.left()
-        canvas.forward()
-        canvas.left()
-        canvas.forward()
+        canvas.forward(self.point2.x - self.point1.x)
+        canvas.left(90)
+        canvas.forward(self.point2.y - self.point1.y)
+        canvas.left(90)
+        canvas.forward(self.point2.x - self.point1.x)
+        canvas.left(90)
+        canvas.forward(self.point2.y - self.point1.y)
 
-        turtle.done()
 
-gui_rectangle = GuiRectangle(Point(randint(0, 9), randint(0, 9)),
-    Point(randint(10, 19), randint(10, 19)))
+
+
+class GuiPoint(Point):
+
+    def draw(self, canvas, size=5, color='red'):
+        canvas.penup()
+        canvas.goto(self.x, self.y)
+        canvas.pendown()
+        canvas.dot(size, color)
+
+
+
+rectangle = GuiRectangle(Point(randint(0, 400), randint(0, 400)),
+    Point(randint(10, 400), randint(10, 400)))
+
+
+
+print("Rectangle Coordinates: ",
+    rectangle.point1.x, ",",
+    rectangle.point1.y, "and",
+    rectangle.point2.x, ",",
+    rectangle.point2.y)
+
+user_point = GuiPoint(int(input("Guess X: ")), int(input("Guess Y: ")))
+
+user_area = float(input("Guess rectangle area: "))
+
+
+print("Your point was inside rectangle: ",
+    user_point.falls_in_rectangle(rectangle))
+
+print("Your are was off by: ",
+rectangle.area() - user_area)
+
 
 myturtle = turtle.Turtle()
 
-gui_rectangle.draw(canvas=myturtle)
+rectangle.draw(canvas=myturtle)
+user_point.draw(canvas=myturtle)
 
-
-
-# rectangle = Rectangle(Point(randint(0, 9), randint(0, 9)),
-# Point(randint(10, 19), randint(10, 19)))
-
-# print("Rectangle Coordinates: ",
-#     rectangle.lowleft.x, ",",
-#     rectangle.lowleft.y, "and",
-#     rectangle.upright.x, ",",
-#     rectangle.upright.y)
-
-# user_point = Point(int(input("Guess X: ")), int(input("Guess Y: ")))
-
-# user_area = float(input("Guess rectangle area: "))
-
-
-# print("Your point was inside rectangle: ",
-#     user_point.falls_in_rectangle(rectangle))
-
-# print("Your are was off by: ",
-# rectangle.area() - user_area)
+turtle.done()
